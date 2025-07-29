@@ -65,7 +65,7 @@ module.exports.getAllUsers =  async (req, res) =>{
         });
     }
 };
-
+ 
 /**Update User data */
 
 module.exports.updateUser = async(req, res)=>{
