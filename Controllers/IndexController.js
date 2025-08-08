@@ -1,14 +1,14 @@
 const { message } = require('statuses');
 const dashboardModel = require('../models/DashboardModel');
 const dasboardModel = require('../models/DashboardModel');
+const catchAsync = require('./../utils/catchAsync');
 module.exports.index = (req, res) => {
    
     res.end("Welcome to the Dashboard from controller.");
 }
 
-module.exports.saveUser = async(req, res) =>{
+module.exports.saveUser = catchAsync(async(req, res, next) =>{
    
-    try{
         const Model = dashboardModel(req.body);
         const data= await Model.save();
         if(data){
@@ -18,20 +18,13 @@ module.exports.saveUser = async(req, res) =>{
                 data:data
             });
         }
-    }catch(err){
-       
-       return  res.status(302).json({
-            status:'error',
-            error:err.message
-         
-        });
-    }
-};
+    
+});
 
 /** get users By Id data */
-module.exports.getUserById = async (req, res)=>{
+module.exports.getUserById = catchAsync(async (req, res)=>{
     const Model =  dasboardModel;
-    try{
+   
        
         const data = await Model.findById({_id: req.params.id});
         return res.status(200).json({
@@ -39,13 +32,7 @@ module.exports.getUserById = async (req, res)=>{
             message:'User data view successfully.',
             data:data
         });
-    }catch(err)  {
-        return res.status(302).json({
-            status:'error',
-            error:err.message
-        });
-    }
-};
+    });
 
 /**get all users */
 
