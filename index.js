@@ -3,8 +3,10 @@ const app  = express();
 const router = require('./routes/web');
 const dotenv =  require('dotenv').config();
 const bodyParser = require('body-parser');
-const appError =  require('./utils/appError');
+const AppError = require('./utils/AppError');
+const ErrorHandlerController = require('./Controllers/ErrorController');
 const mongoose = require('mongoose');
+const status = require('statuses');
 const port = process.env.PORT ||4000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,19 +20,21 @@ mongoose.connect(process.env.CONNECTION_URL).then(() => {
 
 app.use('/v1/user',router);
 
-app.all("*",(req, res, next) =>{
-	next();
-});
-/*Bellow is the middleware to handle the error globally */
-app.use((err, req, res, next) => {
-	err.statusCode = err.statusCode || 500;
-	err.status = err.status || 'error';
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message
-  });
+
+/*Bellow is the middleware for route handle 
+if any unknown route hit from url the it will show custom error
+*/
+app.all(/.*/, (req, res, next) => {
+	// const err = new Error(`The Url: ${req.originalUrl} trying to access is not found.`);
+	
+	/*Below is optimized way to handle error*/
+	next(new AppError(`The Url: ${req.originalUrl} trying to access is not found.`, 404));
 });
 
+
+/*Bellow is the express middleware to handle the error globally */
+
+app.use(ErrorHandlerController);
 
 
 app.listen(port, ()=>{
