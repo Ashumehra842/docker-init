@@ -2,8 +2,8 @@ const { message } = require('statuses');
 const dashboardModel = require('../models/DashboardModel');
 const dasboardModel = require('../models/DashboardModel');
 const catchAsync = require('./../utils/catchAsync');
-const multer =  require('multer');
-const path = require('path');
+const AppError = require('./../utils/appError');
+
 module.exports.index = (req, res) => {
 
     res.end("Welcome to the Dashboard from controller.");
@@ -24,11 +24,14 @@ module.exports.saveUser = catchAsync(async (req, res, next) => {
 });
 
 /** get users By Id data */
-module.exports.getUserById = catchAsync(async (req, res) => {
+module.exports.getUserById = catchAsync(async (req, res, next) => {
     const Model = dasboardModel;
 
 
     const data = await Model.findById({ _id: req.params.id });
+    if(!data){
+        return next(new AppError('No data found with this Id', 404));
+    }
     return res.status(200).json({
         status: 200,
         message: 'User data view successfully.',
