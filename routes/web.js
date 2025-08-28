@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dashboard = require('../Controllers/IndexController');
+const authController =  require('./../Controllers/authController');
 const upload = require('./../utils/upload');
 router.route('/dashborad', ).get(dashboard.index);
 router.route('/save').post(dashboard.saveUser);
@@ -10,4 +11,6 @@ router.route('/update/:id').post(dashboard.updateUser);
 router.route('/dashborad').get(dashboard.index);
 router.route('/profile').post( upload.single("image"),dashboard.profile);
 
+/** Auth Controller routes */
+router.post('/signup', authController.signup);
 module.exports = router;

@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const uncaugherror = require('./utils/uncaughError');
+
 const router = require('./routes/web');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
@@ -14,8 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect(process.env.CONNECTION_URL).then(() => {
 	console.log('DB Connected successfully.');
 }).catch((error) => {
-	console.log(error.message);
+	console.log(error.name, error.message);
 });
+
+/*
+bellow code is used for uncaungh execption lets supose x is not define then it 
+will show our custom error handling error
+*/
+//console.log(x);
 
 
 
@@ -38,6 +46,17 @@ app.all(/.*/, (req, res, next) => {
 app.use(ErrorHandlerController);
 
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log(`server running on port ${port} successfully.`);
 });
+// Bellow code is to handled the unhandled Rejections
+process.on('unhandledRejection', err => {
+	console.log(err.name, err.message);
+	console.log('UNHANDLED REJECTION shuting Down.....');
+
+	server.close(() => {
+		process.exit(1);
+	});
+});
+
+
