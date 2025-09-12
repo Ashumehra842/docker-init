@@ -17,10 +17,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Photo is required']
     },
+    role:{
+        type:String,
+        enum:['user', 'lead-guide','admin'],
+        default:'user'
+    },
     password: {
         type: String,
         required: [true, 'Password is required'],
-        minlength: 8
+        minlength: 8,
+        select:false
     },
     passwordConfirm: {
         type: String,
@@ -44,6 +50,11 @@ userSchema.pre('save', async function (next) {
     this.passwordConfirm = undefined; // this is because password and confirm password checked above we no need to save the c_password
     next();
 });
+
+//compare password while login
+userSchema. methods.correctPassword = async function(candidatepassword, userPassword){
+    return await bcrypt.compare(candidatepassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
