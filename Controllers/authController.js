@@ -13,7 +13,8 @@ exports.signup = catchAsync(async (req, res, next) => {
         photo: req.body.photo,
         role: req.body.role,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        passwordChangeAt: req.body.passwordChangeAt
     });
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
@@ -65,14 +66,14 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
 
     //1) get token and check if exists
-    //2) validate token
+    
     //3) check if user still exists
     //4) check if user change password after jwt token generate
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
     }
-
+    //2) validate token
     if (!token) {
         return next(new AppError('You are not logged in! please log in to get access'), 401);
     }
@@ -81,10 +82,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     // check if user still exists
     const freshUser = await User.findById(decoded.id);
-    console.log(freshUser);
+    
     if (!freshUser) {
 
         return next(new AppError('The User belonging to this token does no longer exists.', 401));
+    }
+
+    if(freshUser.changePasswordAfter(decoded.iat)){
+        return next(new AppError('User recently change password! Please login again.',401));
     }
     req.user = freshUser;
     next();
