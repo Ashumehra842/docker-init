@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
     passwordResetExpires: {
         type: Date,
     },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    }
 });
 
 userSchema.pre("save", async function (next) {
@@ -67,6 +72,11 @@ userSchema.pre("save", function (next) {
     next();
 });
 
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $ne: false } });
+    next();
+});
+
 //compare password while login
 userSchema.methods.correctPassword = async function (
     candidatepassword,
@@ -82,7 +92,7 @@ userSchema.methods.changePasswordAfter = function (JWTTimestemp) {
             this.passwordChangeAt.getTime() / 1000,
             10
         );
-       
+
         return JWTTimestemp < changeTimestemp;
     }
     // FALSE mean password not change

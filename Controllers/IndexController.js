@@ -3,7 +3,7 @@ const dashboardModel = require('../models/DashboardModel');
 const dasboardModel = require('../models/DashboardModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-
+const User = require('./../models/userModel');
 module.exports.index = (req, res) => {
 
     res.end("Welcome to the Dashboard from controller.");
@@ -25,7 +25,7 @@ module.exports.saveUser = catchAsync(async (req, res, next) => {
 
 /** get users By Id data */
 module.exports.getUserById = catchAsync(async (req, res, next) => {
-    const Model = dasboardModel;
+    const Model = User;
 
 
     const data = await Model.findById({ _id: req.params.id });
@@ -43,7 +43,7 @@ module.exports.getUserById = catchAsync(async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res) => {
     try {
-        const model = dasboardModel;
+        const model = User;
         const data = await model.find();
         return res.status(200).json({
             status: 'success',
