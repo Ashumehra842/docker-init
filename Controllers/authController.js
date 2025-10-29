@@ -12,6 +12,17 @@ const signToken = id => {
 
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
+    // Below cookies is for web pages to send store and receive back the jwt token
+    const cookieOtions = {
+        expires: new Date(
+            Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true
+    };
+    if (process.env.NODE_ENV === 'production') cookieOtions.secure = true;
+
+    res.cookie("jwt", token, cookieOtions);
+    user.password = undefined; // to not show password in signup response
     res.status(statusCode).json({
         status: "success",
         message: "user created successfully.",
@@ -37,7 +48,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
         return next(
             new AppError("Please provide the valid email and password", 400)
@@ -184,10 +195,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.updatePassword = catchAsync(async (req, res, next) => {
     // 1) get user from collection
     const user = await User.findById(req.user.id).select("+password");
-    
+
     // 2) current Posted password is correct
-    
-    if ( ! ( await user.correctPassword(req.body.passwordCurrent, req.user.password))) {
+
+    if (!(await user.correctPassword(req.body.passwordCurrent, req.user.password))) {
         return next(new AppError(`Your Current Password is Wrong.`, 401));
     }
 

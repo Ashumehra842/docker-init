@@ -8,9 +8,34 @@ const bodyParser = require('body-parser');
 const AppError = require('./utils/appError');
 const ErrorHandlerController = require('./Controllers/ErrorController');
 const mongoose = require('mongoose');
-const status = require('statuses');
+const rateLimit = require('express-rate-limit'); // limit the request from same IP and block
+const helmet = require('helmet'); //security http headers
+const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
+
+
+// express-rate-limiter
+const limiter = rateLimit({
+	max: 100,
+	windowMs: 60 * 60 * 1000,
+	message: 'Too may request from this IP, please try again in an hour'
+});
+app.use('/v1', limiter); // applied rate limit
+app.use(express.json({ limit: '10kb' }));
+
+// Data sanatization against NoSQL Query
+// app.use(mongoSanitize());
+// data sanitization  against XSS
+
+
+app.use(express.static(`${__dirname}/public`)); // serving static path
+
+
 const port = process.env.PORT || 4000;
-app.use(express.json());
+
+
+
+
+
 app.use(express.urlencoded({ extended: true }));
 /* Create DB connection */
 mongoose.connect(process.env.CONNECTION_URL).then(() => {
