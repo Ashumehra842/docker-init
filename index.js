@@ -10,7 +10,7 @@ const ErrorHandlerController = require('./Controllers/ErrorController');
 const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit'); // limit the request from same IP and block
 const helmet = require('helmet'); //security http headers
-const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
+//const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
 
 
 // express-rate-limiter
@@ -38,11 +38,18 @@ const port = process.env.PORT || 4000;
 
 app.use(express.urlencoded({ extended: true }));
 /* Create DB connection */
-mongoose.connect(process.env.CONNECTION_URL).then(() => {
-	console.log('DB Connected successfully.');
-}).catch((error) => {
-	console.log(error.name, error.message);
-});
+
+const DB = process.env.DATABASE.replace(
+	'<PASSWORD>',
+	process.env.DATABASE_PASSWORD
+);
+
+mongoose
+	.connect(DB, {
+		useNewUrlParser: true,
+		
+	})
+	.then(() => console.log('DB connection successful!'));
 
 /*
 bellow code is used for uncaungh execption lets supose x is not define then it 
