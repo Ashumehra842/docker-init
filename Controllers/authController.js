@@ -116,7 +116,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // Roles and permissions.
-exports.restrictedTo = (...roles) => {
+exports.restrictTo = (...roles) => {
     return (req, res, next) => {
         // roles in ['user','lead-guide', 'admin'] it might be admin or user
         if (!roles.includes(req.user.role)) {

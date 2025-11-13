@@ -1,7 +1,7 @@
 const express = require('express');
-const app = express();
-const uncaugherror = require('./utils/uncaughError');
 
+const uncaugherror = require('./utils/uncaughError');
+const path = require('path');
 const router = require('./routes/web');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
@@ -11,8 +11,10 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit'); // limit the request from same IP and block
 const helmet = require('helmet'); //security http headers
 //const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
+const app = express();
 
-
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 // express-rate-limiter
 const limiter = rateLimit({
 	max: 100,
@@ -26,8 +28,8 @@ app.use(express.json({ limit: '10kb' }));
 // app.use(mongoSanitize());
 // data sanitization  against XSS
 
-
-app.use(express.static(`${__dirname}/public`)); // serving static path
+app.use(express.static(path.join(__dirname, 'public'))); // serving static path
+//app.use(express.static(`${__dirname}/public`)); // serving static path
 
 
 const port = process.env.PORT || 4000;
@@ -58,7 +60,12 @@ will show our custom error handling error
 //console.log(x);
 
 
-
+app.get('/', (req, res) =>{
+	return 	res.status(200).render('base',{
+		tour:'The Forest Hiker',
+		user:'Jonas'
+	});
+});
 app.use('/v1/user', router);
 
 
