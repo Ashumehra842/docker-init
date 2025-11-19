@@ -80,7 +80,7 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-   /* startLocation: {
+    startLocation: {
       // GeoJSON
       type: {
         type: String,
@@ -103,7 +103,7 @@ const tourSchema = new mongoose.Schema(
         description: String,
         day: Number
       }
-    ],*/
+    ],
     guides: [
       {
         type: mongoose.Schema.ObjectId,

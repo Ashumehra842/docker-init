@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit'); // limit the request from same IP and block
 const helmet = require('helmet'); //security http headers
 //const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
+const viewRouter = require('./routes/viewRoutes');
 const app = express();
 
 app.set('view engine', 'pug');
@@ -49,7 +50,7 @@ const DB = process.env.DATABASE.replace(
 mongoose
 	.connect(DB, {
 		useNewUrlParser: true,
-		
+
 	})
 	.then(() => console.log('DB connection successful!'));
 
@@ -60,12 +61,7 @@ will show our custom error handling error
 //console.log(x);
 
 
-app.get('/', (req, res) =>{
-	return 	res.status(200).render('base',{
-		tour:'The Forest Hiker',
-		user:'Jonas'
-	});
-});
+app.use('/', viewRouter);
 app.use('/v1/user', router);
 
 
