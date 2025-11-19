@@ -5,10 +5,15 @@ html
         link(rel='stylesheet' href="css/style.css")
         link(rel="shortcut icon", type='image/png' href='img/favicon.png')
     body 
-        h1= tour
-        h2= user.toUpperCase()
-        //-h1 The Park Camper
-        - const x = 9 //-to write java script in html
-        h2= 2 * x
-        p this is just some text 
+        // HEADER
+        include _header
+
+            // SECTION
+        section.overview
+            h1=tour
+
+        // FOOTER
+        include _footer
+
+      
 
