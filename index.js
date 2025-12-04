@@ -2,6 +2,7 @@ const express = require('express');
 
 const uncaugherror = require('./utils/uncaughError');
 const path = require('path');
+const cookieParser = require("cookie-parser");
 const router = require('./routes/web');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
@@ -12,7 +13,13 @@ const rateLimit = require('express-rate-limit'); // limit the request from same 
 const helmet = require('helmet'); //security http headers
 //const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
 const viewRouter = require('./routes/viewRoutes');
+
+const cors =  require('cors');
 const app = express();
+app.use(cors({
+    origin: "http://127.0.0.1:3000",
+    credentials: true
+}));
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +31,7 @@ const limiter = rateLimit({
 });
 app.use('/v1', limiter); // applied rate limit
 app.use(express.json({ limit: '10kb' }));
-
+app.use(cookieParser());
 // Data sanatization against NoSQL Query
 // app.use(mongoSanitize());
 // data sanitization  against XSS
@@ -60,6 +67,10 @@ will show our custom error handling error
 */
 //console.log(x);
 
+app.use((req, res, next) => {
+	
+	next();
+});
 
 app.use('/', viewRouter);
 app.use('/v1/user', router);

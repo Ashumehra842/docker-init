@@ -127,11 +127,11 @@ tourSchema.virtual('durationWeeks').get(function() {
 });
 
 // Virtual populate
-/*tourSchema.virtual('reviews', {
-  ref: 'Review',
+tourSchema.virtual('reviews', {
+  ref: 'review',
   foreignField: 'tour',
   localField: '_id'
-});*/
+});
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {

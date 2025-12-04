@@ -13,7 +13,6 @@ router.route("/save").post(dashboard.saveUser);
 router.route("/list").get(authController.protect, dashboard.getAllUsers);
 router.route("/getUserById/:id").get(dashboard.getUserById);
 router.route("/update/:id").post(dashboard.updateUser);
-router.route("/dashborad").get(dashboard.index);
 router.route("/profile").post(upload.single("image"), dashboard.profile);
 router.post(
   "/delete/:id",
