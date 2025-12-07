@@ -9,5 +9,7 @@ router.route('/tour/:slug').get(authController.isLoggedIn,viewsController.getTou
 
 router.route('/login').get(authController.isLoggedIn, viewsController.getLoginForm);
 router.route('/logout').get(authController.isLoggedIn, viewsController.logout);
+router.route('/me').get(authController.isLoggedIn, viewsController.getAccount);
+router.route('/submit-user-data').post( authController.protect, viewsController.updateUserData);
 
 module.exports = router;

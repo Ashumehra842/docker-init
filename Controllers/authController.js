@@ -127,7 +127,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 // protection for web-routes
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
-    console.error("hello from the route...2");
+   
   if (req.cookies.jwt) {
     try {
       // 1) verify token
@@ -141,13 +141,14 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
       if (!currentUser) {
         return next();
       }
-
+      
       // 3) Check if user changed password after the token was issued
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
-        return next();
-      } 
+    //   if (currentUser.changedPasswordAfter(decoded.iat)) {
+    //     return next();
+    //   } 
 
       // THERE IS A LOGGED IN USER
+      
       res.locals.user = currentUser;
       
       return next();
@@ -180,7 +181,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
 
   await user.save({ validateBeforeSave: false });
-  //generate rendom token to reset password
+  //generate random token to reset password
   const resetURL = `${req.protocol}://${req.get(
     "host"
   )}/v1/user/resetPassword/${resetToken}`;
