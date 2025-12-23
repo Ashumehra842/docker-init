@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const dashboard = require("../Controllers/IndexController");
 const authController = require("./../Controllers/authController");
-const upload = require("./../utils/upload");
+/*const upload = require("./../utils/upload");*/
 const userController = require('./../Controllers/UserController');
 const tourController = require('./../controllers/tourController');
 const reviewController = require('./../Controllers/reviewController');
-
+const multer = require('multer');
+const upload = multer({dest:'public/img/users'});
 
 router.route("/dashborad").get(dashboard.index);
 router.route("/save").post(dashboard.saveUser);
@@ -28,8 +29,8 @@ router.post("/forgotPassword", authController.forgotPassword);
 
 router.patch("/resetPassword/:token", authController.resetPassword);
 router.patch("/updateMyPassword", authController.protect, authController.updatePassword);
-router.patch('/updateMe', authController.protect, userController.updateMe);
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.patch('/updateMe', authController.protect,userController.uploadUserPhoto,userController.resizeUserPhoto, userController.updateMe);
+router.delete('/deleteMe', authController.protect,upload.single('photo'), userController.deleteMe);
 
 
 // Tour Routes
