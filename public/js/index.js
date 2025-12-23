@@ -4,17 +4,24 @@ import { logout } from '../../Controllers/viewsController';
 import {updateData} from './updateSettings';
 const logOutBtn = document.querySelector('.nav__el--logout');
 const updateUserData = document.querySelector('.form-user-data');
-document.querySelector(".form--login").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  login(email, password);
-}); 
+const isFormClassSet = document.querySelector(".form--login");
 
+//Login function
+if(isFormClassSet){
+    isFormClassSet.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      login(email, password);
+    }); 
+}
+
+//Log Out function
 if(logOutBtn){
   logOutBtn.addEventListener('click', logout);
 }
 
+// Update User data function
 if(updateUserData){
   updateUserData.addEventListener('submit',e =>{
     e.preventDefault();
