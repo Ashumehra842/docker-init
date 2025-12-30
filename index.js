@@ -17,10 +17,7 @@ const bookingRouter = require('./routes/bookingRoutes');
 
 const cors =  require('cors');
 const app = express();
-app.use(cors({
-    origin: "http://127.0.0.1:3000",
-    credentials: true
-}));
+
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +27,7 @@ const limiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
 	message: 'Too may request from this IP, please try again in an hour'
 });
+app.use(cors());
 app.use('/v1', limiter); // applied rate limit
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
