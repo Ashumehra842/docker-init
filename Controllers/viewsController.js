@@ -1,3 +1,4 @@
+const Booking = require("../models/bookingModel");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
@@ -45,30 +46,51 @@ exports.logout = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
   });
-}); 
-exports.getAccount = catchAsync(async(req, res, next) =>{
-   
-    res.status(200).render('account',{
-        title:'Account'
-    });
-}); 
+});
+exports.getAccount = catchAsync(async (req, res, next) => {
+  res.status(200).render("account", {
+    title: "Account",
+  });
+});
 
-exports.updateUserData = catchAsync(async(req,res, next)=>{
-    const UpdatedUser = await User.findByIdAndUpdate(req.user.id, {
-        name:req.body.name,
-        email:req.body.email
-    },{
-        new:true,
-        runValidators:true
-    });
+exports.updateUserData = catchAsync(async (req, res, next) => {
+  const UpdatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
-    if(!UpdatedUser){
-        return next(new AppError('Failed to update user data', 401));
-    } 
- 
-    res.status(200).render('account',{
-        title:'Account',
-        user:UpdatedUser
-    });
+  if (!UpdatedUser) {
+    return next(new AppError("Failed to update user data", 401));
+  }
 
-}); 
+  res.status(200).render("account", {
+    title: "Account",
+    user: UpdatedUser,
+  });
+});
+
+exports.getMyTours = catchAsync(async (req, res, next) => {
+  //1) find all bookings
+  const booking = await Booking.find({ user: req.user.id });
+
+  if (!booking) {
+    next(new AppError(`No booking found.`, 404));
+  }
+
+  //- const tour = await Tour.findById({ _id: booking.tour._id });
+
+  //2) find tour with returned ids
+  const tourIDs = booking.map((el) => el.tour);
+  const tours = await Tour.find({ _id: { $in: tourIDs } });
+  res.status(200).render('overview',{
+    title:'My Tour',
+    tours
+  });
+});

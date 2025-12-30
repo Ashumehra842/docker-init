@@ -13,6 +13,7 @@ const rateLimit = require('express-rate-limit'); // limit the request from same 
 const helmet = require('helmet'); //security http headers
 //const mongoSanitize = require('express-mongo-sanitize'); // prevent to pass QUERY IN PAYLOAD
 const viewRouter = require('./routes/viewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 
 const cors =  require('cors');
 const app = express();
@@ -74,6 +75,7 @@ app.use((req, res, next) => {
 
 app.use('/', viewRouter);
 app.use('/v1/user', router);
+app.use('/v1/booking', bookingRouter);
 
 
 /*Bellow is the middleware for route handle 
